@@ -1,20 +1,32 @@
 from abc import ABC, abstractmethod
+from typing import Any
 
 
 class Validator(ABC):
-    def __set_name__(self, owner, name) -> None:
+    def __set_name__(
+            self,
+            owner: Any,
+            name: str
+    ) -> None:
         self.protected_name = "_" + name
 
-    def __get__(self, instance, owner) -> None:
+    def __get__(
+            self,
+            instance: Any,
+            owner: Any
+    ) -> None:
         return getattr(instance, self.protected_name)
 
-    def __set__(self, instance, value):
+    def __set__(
+            self,
+            instance: Any,
+            value: Any) -> Any:
         self.validate(value)
         return setattr(instance, self.protected_name, value)
 
     @abstractmethod
-    def validate(self, value: int | str) -> str:
-        return "burger will be created"
+    def validate(self, value: int | str) -> None:
+        pass
 
 
 class Number(Validator):
@@ -49,6 +61,7 @@ class BurgerRecipe:
     cutlets = Number(1, 3)
     eggs = Number(0, 2)
     sauce = OneOf(("ketchup", "mayo", "burger"))
+
     def __init__(
             self,
             buns: int,
